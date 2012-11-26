@@ -1,0 +1,74 @@
+<head>
+  <title>jedit</title>
+</head>
+
+<body>
+  <div class="container-fluid">
+    <div class="row-fluid">
+      <div class="span12">
+	{{#with "col"}}
+	{{> jedit this}}
+	{{/with}}
+      </div>
+    </div>
+  </div>
+</body>
+
+<template name="jedit">
+  {{#each itemin this}}
+  <div class="well id" mid="{{this._id}}">
+    <i class="icon-resize-full" title="clone"></i>
+    <i class="icon-pencil" title="edit json"></i>
+    {{> jelly this}}
+  </div>
+  {{/each}}
+  <i class="icon-plus addtocol"></i>
+  <span>{{this}}</span>
+</template>
+
+
+<template name="jelly">
+   <i class="icon-plus addprop"></i>
+   <i class="icon-trash"></i>
+
+  {{#each keys this}}
+  {{#if simple val}}
+  {{#if isid key}}
+    <div class="val key key{{key}}" key="{{key}}" value="{{val}}">{{val}}</div>
+    {{else}}
+    <div key="{{key}}" class="key">{{key}} = 
+      <input class="val" value="{{val}}"></input>
+    </div>
+    {{/if}}
+  {{else}}
+    <div key="{{key}}" class="key">
+    <span class="obj">{{key}} =</span>
+    <div class="well">
+      {{> jelly this}}
+    </div>
+  </div>
+  {{/if}}
+  {{/each}}
+</template>
+
+<template name="shelly">
+  {{#each skeys this}}
+  {{#if simple val}}
+  {{#if isid key}}
+  {{else}}
+    <div key="{{key}}" class="key">{{key}} : 
+      <span class="val">{{val}}</span>
+    </div>
+    {{/if}}
+  {{else}}
+    <div key="{{key}}" class="key">
+    <span class="obj">{{key}} --> </span>
+    <div class="well">
+      {{> shelly this}}
+    </div>
+  </div>
+  {{/if}}
+  {{/each}}
+</template>
+
+

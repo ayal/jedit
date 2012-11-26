@@ -1,0 +1,9 @@
+/* CSS declarations go here */
+input {
+    width: auto;
+}
+
+.id {
+    width: 20%;
+    float:left;
+}

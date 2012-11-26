@@ -1,0 +1,102 @@
+col = new Meteor.Collection("col");
+
+if (Meteor.isClient) {
+  Template.jedit.itemin = function (name) {
+    return window[name].find({});
+  };
+  Template.jelly.str = function (obj) {
+    return JSON.stringify(obj);
+  };
+  window.flush = {
+      
+  };
+  Template.jedit.events = {
+    'click .icon-pencil' : function (e,t) {
+      $(e.currentTarget).parent().find('input.jstr').toggle();
+    },
+    'click span.val' : function (e,t) {
+      $(e.currentTarget).hide().prev('input.val').show();
+    },
+    'click .hideit' : function (e,t) {
+      e.stopPropagation();
+      console.log($(e.currentTarget));
+      var wells =  $(e.currentTarget).parent().find('.well');
+      console.log(wells.length);
+      $(wells[0]).toggle();
+      return false;
+    },
+    'click .add' : function (e,t) {
+      var isarr = $.isArray(this.val || this);
+      var path = ['NEWKEY' + Object.keys(this.val || this).length];
+      if (isarr) {
+          path = [];
+      }
+
+      var id = $(e.currentTarget).parents('.id').attr('mid');
+      var parents = $(e.currentTarget).parents('.key');
+      $.each(parents, function(i, el){
+        path.push($(el).attr('key'));
+      });
+
+      var oval = this.val || this;
+      var thepath = path.reverse().join('.');
+      console.log(this, $(e.currentTarget).val(), $(e.target).val(), thepath, id);
+      var nval = isarr ? $.merge(['NEWVAL'], oval) : 'NEWVAL';
+      var toset = {};
+      toset[thepath] = nval;
+
+      console.log('update', id, toset);
+      col.update(id, {$set : toset});
+
+      return true;
+    },
+    'keydown .val' : function (e,t) {
+      // template data, if any, is available in 'this'
+      var path = [];
+      var id = $(e.currentTarget).parents('.id').attr('mid');
+      var parents = $(e.currentTarget).parents('.key');
+      $.each(parents, function(i, el){
+        path.push($(el).attr('key'));
+      });
+
+      var thepath = this.key;//path.reverse().join('.');
+      console.log(this, $(e.currentTarget).val(), $(e.target).val(), thepath, id);
+      var ttype = typeof this.val || this;
+      window.clearTimeout(flush[thepath]);
+      window.flush[thepath] = setTimeout(function(){
+        var toset = {};
+        toset[thepath] = ttype === 'number' ? parseInt($(e.target).val()) : $(e.target).val();
+        console.log('update', id, toset);
+        col.update(id, {$set : toset});
+      },500);
+      return true;
+    }
+  };
+  Template.jelly.keys = function (x) {
+    console.log('keys', x);
+    var o = x;
+    if (x.val) {
+        o = x.val;
+    }
+    var p = x.key ? x.key + '.' : '';
+    return  $.map(Object.keys(o), function(y){
+      return {key: p + y,  val: o[y]};
+    });
+  };
+  Template.jelly.isid = function(key){
+      return key === '_id' || key === 'jeditp';
+  };
+
+  Template.jelly.simple = function (x) {
+    return typeof x !== 'object';
+  };
+}
+
+if (Meteor.isServer) {
+  col.remove({});
+  col.insert({name: 'Ayal', obj: {one: 1, two: [1,2]}});
+  col.insert({name: 'bubu', obj: {one: 2, two: [1,4,{what: new Date()}]}});
+  Meteor.startup(function () {
+    
+  });
+}

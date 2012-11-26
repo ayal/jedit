@@ -1,0 +1,47 @@
+<head>
+  <title>jedit</title>
+</head>
+
+<body>
+  <div class="container-fluid">
+    <div class="row-fluid">
+      <div class="span3">
+      {{> jedit}}
+      </div>
+    </div>
+  </div>
+</body>
+
+<template name="jedit">
+  {{#each itemin "col"}}
+  <div class="well id" mid="{{this._id}}">
+  {{> jelly this}}
+  </div>
+  {{/each}}
+</template>
+
+
+<template name="jelly">
+  <i class="icon-plus"></i>  <i class="icon-pencil"></i>  <i class="icon-picture"></i>  <i class="icon-asterisk"></i>
+  <input class="jstr" value="{{str this}}" style="display:none"></input>
+  {{#each keys this}}
+  {{#if simple val}}
+  {{#if isid key}}
+    <div class="val key" key="{{key}}" value="{{val}}">{{val}}</div>
+    {{else}}
+    <div key="{{key}}" class="key">{{key}} = 
+      <input class="val" value="{{val}}"></input>
+      <!-- <span class="val">{{val}}</span> -->
+    </div>
+    {{/if}}
+  {{else}}
+    <div key="{{key}}" class="key">
+    <span class="obj">{{key}} =</span>
+    <div class="well">
+      {{> jelly this}}
+    </div>
+  </div>
+  {{/if}}
+  {{/each}}
+</template>
+
